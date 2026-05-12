@@ -4,7 +4,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./src:/var/www/html
+      - ./src:/var/www/html:z
     env_file:
       - .env
     depends_on:
@@ -16,9 +16,9 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
       MYSQL_DATABASE: ${DB_NAME}
     volumes:
-      - ./docker/init.sh:/docker-entrypoint-initdb.d/init.sh
-      - ./src/database/Schema:/docker/schema
-      - ./src/database/Data:/docker/data
+      - ./docker/init.sh:/docker-entrypoint-initdb.d/init.sh:z
+      - ./src/database/Schema:/docker/schema:z
+      - ./src/database/Data:/docker/data:z
     ports:
       - "3306:3306"
     # No named volume here intentionally — database is wiped fresh on every startup
