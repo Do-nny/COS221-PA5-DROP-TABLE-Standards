@@ -72,6 +72,8 @@ Keep your `CREATE TABLE` statements in `schema.sql` and your `INSERT` statements
 docker compose up
 ```
 
+> The first time you run it, use `docker compose up --build` so Docker builds the custom PHP image. After that, plain `docker compose up` is fine.
+
 Once running, open your browser and go to:
 
 | URL | What it is |
