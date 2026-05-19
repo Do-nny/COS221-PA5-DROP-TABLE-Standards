@@ -229,6 +229,48 @@ INSERT INTO `itinerary_day` (`package_id`, `day_number`, `day_activity`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `itinerary_day_item`
+--
+
+CREATE TABLE `itinerary_day_item` (
+  `package_id` int UNSIGNED NOT NULL,
+  `day_number` tinyint UNSIGNED NOT NULL,
+  `item_id` int UNSIGNED NOT NULL,
+  `item_time` time DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `itinerary_day_item`
+--
+
+INSERT INTO `itinerary_day_item` (`package_id`, `day_number`, `item_id`, `item_time`) VALUES
+(1, 1, 1, '08:00:00'),
+(2, 1, 2, '11:00:00'),
+(3, 1, 3, '06:30:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `package_destinations`
+--
+
+CREATE TABLE `package_destinations` (
+  `package_id` int UNSIGNED NOT NULL,
+  `destination_id` int UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `package_destinations`
+--
+
+INSERT INTO `package_destinations` (`package_id`, `destination_id`) VALUES
+(1, 3),
+(2, 2),
+(3, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `package_review`
 --
 
@@ -390,18 +432,17 @@ CREATE TABLE `travel_package` (
   `price_per_individual` decimal(12,2) NOT NULL,
   `total_price_of_package` decimal(12,2) NOT NULL,
   `package_status` enum('active','inactive','fully_booked','cancelled') NOT NULL DEFAULT 'active',
-  `agency_id` int UNSIGNED NOT NULL,
-  `destination_id` int UNSIGNED NOT NULL
+  `agency_id` int UNSIGNED NOT NULL
 ) ;
 
 --
 -- Dumping data for table `travel_package`
 --
 
-INSERT INTO `travel_package` (`package_id`, `start_date`, `end_date`, `price_per_individual`, `total_price_of_package`, `package_status`, `agency_id`, `destination_id`) VALUES
-(1, '2025-07-01', '2025-07-10', 1500.00, 15000.00, 'active', 1, 3),
-(2, '2025-08-15', '2025-08-25', 2200.00, 22000.00, 'active', 2, 2),
-(3, '2025-09-05', '2025-09-12', 1800.00, 18000.00, 'fully_booked', 3, 1);
+INSERT INTO `travel_package` (`package_id`, `start_date`, `end_date`, `price_per_individual`, `total_price_of_package`, `package_status`, `agency_id`) VALUES
+(1, '2025-07-01', '2025-07-10', 1500.00, 15000.00, 'active', 1),
+(2, '2025-08-15', '2025-08-25', 2200.00, 22000.00, 'active', 2),
+(3, '2025-09-05', '2025-09-12', 1800.00, 18000.00, 'fully_booked', 3);
 
 -- --------------------------------------------------------
 
@@ -486,6 +527,20 @@ ALTER TABLE `itinerary_day`
   ADD PRIMARY KEY (`package_id`,`day_number`);
 
 --
+-- Indexes for table `itinerary_day_item`
+--
+ALTER TABLE `itinerary_day_item`
+  ADD PRIMARY KEY (`package_id`,`day_number`,`item_id`),
+  ADD KEY `item_id` (`item_id`);
+
+--
+-- Indexes for table `package_destinations`
+--
+ALTER TABLE `package_destinations`
+  ADD PRIMARY KEY (`package_id`,`destination_id`),
+  ADD KEY `destination_id` (`destination_id`);
+
+--
 -- Indexes for table `package_review`
 --
 ALTER TABLE `package_review`
@@ -530,8 +585,7 @@ ALTER TABLE `travel_item`
 --
 ALTER TABLE `travel_package`
   ADD PRIMARY KEY (`package_id`),
-  ADD KEY `agency_id` (`agency_id`),
-  ADD KEY `destination_id` (`destination_id`);
+  ADD KEY `agency_id` (`agency_id`);
 
 --
 -- Indexes for table `travel_package_images`
@@ -646,6 +700,20 @@ ALTER TABLE `itinerary_day`
   ADD CONSTRAINT `itinerary_day_ibfk_1` FOREIGN KEY (`package_id`) REFERENCES `travel_package` (`package_id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `itinerary_day_item`
+--
+ALTER TABLE `itinerary_day_item`
+  ADD CONSTRAINT `itinerary_day_item_ibfk_1` FOREIGN KEY (`package_id`,`day_number`) REFERENCES `itinerary_day` (`package_id`,`day_number`) ON DELETE CASCADE,
+  ADD CONSTRAINT `itinerary_day_item_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `travel_item` (`item_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `package_destinations`
+--
+ALTER TABLE `package_destinations`
+  ADD CONSTRAINT `package_destinations_ibfk_1` FOREIGN KEY (`package_id`) REFERENCES `travel_package` (`package_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `package_destinations_ibfk_2` FOREIGN KEY (`destination_id`) REFERENCES `destination` (`destination_id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `package_review`
 --
 ALTER TABLE `package_review`
@@ -667,8 +735,7 @@ ALTER TABLE `tourist_attraction`
 -- Constraints for table `travel_package`
 --
 ALTER TABLE `travel_package`
-  ADD CONSTRAINT `travel_package_ibfk_1` FOREIGN KEY (`agency_id`) REFERENCES `travel_agency` (`user_id`),
-  ADD CONSTRAINT `travel_package_ibfk_2` FOREIGN KEY (`destination_id`) REFERENCES `destination` (`destination_id`);
+  ADD CONSTRAINT `travel_package_ibfk_1` FOREIGN KEY (`agency_id`) REFERENCES `travel_agency` (`user_id`);
 
 --
 -- Constraints for table `travel_package_images`
