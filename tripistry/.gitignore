@@ -1,0 +1,10 @@
+# IDE and Editor folders
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Any local scratchpads or notes you made
+*.log
